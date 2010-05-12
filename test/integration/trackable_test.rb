@@ -14,7 +14,9 @@ class TrackableHooksTest < ActionController::IntegrationTest
     assert_kind_of Time, user.last_sign_in_at
 
     assert_equal user.current_sign_in_at, user.last_sign_in_at
-    assert user.current_sign_in_at >= user.created_at
+    # Ignore microseconds during comparison, since Mongoid create_at
+    # timestamps are more accurate than our *_sign_in_at times.
+    assert user.current_sign_in_at.to_i >= user.created_at.to_i
 
     visit destroy_user_session_path
     new_time = 2.seconds.from_now
