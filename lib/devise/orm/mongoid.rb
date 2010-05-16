@@ -1,17 +1,6 @@
 module Devise
   module Orm
     module Mongoid
-      # These are always included in Mongoid::Document.
-      module AutomaticClassMethods
-        # Similar to attr_accessible, but it must appear _before_ the
-        # 'devise' declaration.
-        def devise_accessible(*attrs)
-          @devise_accessible ||= []
-          @devise_accessible.concat(attrs.map {|a| a.to_sym })
-        end
-      end
-      ::Mongoid::Document::ClassMethods.send(:include, AutomaticClassMethods)
-
       module InstanceMethods
         def update_attribute(name, value)
           update_attributes(name => value)
@@ -64,13 +53,7 @@ module Devise
         # MongoMapper, and to make some of the unit tests pass.
         type = Time if type == DateTime
 
-        # Determine whether this attr should be accessible via bulk update.
-        accessible = true
-        unless @devise_accessible.nil?
-          accessible = @devise_accessible.include?(name.to_sym)
-        end
-
-        field name, { :type => type, :accessible => accessible }.merge(options)
+        field name, { :type => type }.merge(options)
       end
     end
   end

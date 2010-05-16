@@ -1,3 +1,12 @@
+IF YOU USE DEVISE WITH MONGOID, WE _STRONGLY_ RECOMMEND USING
+mongoid_attr_accessible OR SOMETHING EQUIVALENT.  FAILURE TO DO SO MAY
+ALLOW ATTACKS AGAINST YOUR USER AUTHENTICATION SYSTEM.
+
+See http://github.com/emk/mongoid_attr_accessible.
+
+A SIMILAR WARNING GOES FOR MONGOMAPPER--DO NOT USE IT WITHOUT AN
+APPROPRIATE, WELL-TESTED attr_accessible IMPLEMENTATION!
+
 == Devise
 
 Devise is a flexible authentication solution for Rails based on Warden. It:
@@ -234,7 +243,7 @@ Devise implements encryption strategies for Clearance, Authlogic and Restful-Aut
 
 == Other ORMs
 
-Devise supports both ActiveRecord (default) and MongoMapper, and has experimental Datamapper supports (in a sense that Devise test suite does not run completely with Datamapper). To choose other ORM, you just need to configure it in the initializer file.
+This version of Devise supports both ActiveRecord (default) and Mongoid, and has experimental Datamapper supports (in a sense that Devise test suite does not run completely with Datamapper). To choose other ORM, you just need to configure it in the initializer file.
 
 == TODO
 

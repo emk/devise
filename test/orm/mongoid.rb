@@ -2,6 +2,7 @@ require 'mongoid'
 
 Mongoid.configure do |config|
   config.master = Mongo::Connection.new.db('devise-test-suite-mongoid')
+  config.allow_dynamic_fields = false
 end
 
 require File.join(File.dirname(__FILE__), '..', 'rails_app', 'config', 'environment')
