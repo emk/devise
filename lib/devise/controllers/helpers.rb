@@ -5,7 +5,7 @@ module Devise
 
       def self.included(base)
         base.class_eval do
-          helper_method :warden, :signed_in?, :devise_controller?,
+          helper_method :warden, :signed_in?, :devise_controller?, :anybody_signed_in?,
                         *Devise.mappings.keys.map { |m| [:"current_#{m}", :"#{m}_signed_in?", :"#{m}_session"] }.flatten
 
           # Use devise default_url_options. We have to declare it here to overwrite
@@ -46,6 +46,12 @@ module Devise
       # authentication hooks.
       def signed_in?(scope)
         warden.authenticate?(:scope => scope)
+      end
+
+      # Check if the any scope is signed in session, without running
+      # authentication hooks.
+      def anybody_signed_in?
+        Devise.mappings.keys.any? { |scope| signed_in?(scope) }
       end
 
       # Sign in an user that already was authenticated. This helper is useful for logging
@@ -99,13 +105,13 @@ module Devise
       #
       #   map.user_root '/users', :controller => 'users' # creates user_root_path
       #
-      #   map.resources :users do |users|
-      #     users.root # creates user_root_path
+      #   map.namespace :user do |user|
+      #     user.root :controller => 'users' # creates user_root_path
       #   end
       #
       #
-      # If none of these are defined, root_path is used. However, if this default
-      # is not enough, you can customize it, for example:
+      # If the resource root path is not defined, root_path is used. However,
+      # if this default is not enough, you can customize it, for example:
       #
       #   def after_sign_in_path_for(resource)
       #     if resource.is_a?(User) && resource.can_publish?
