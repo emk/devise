@@ -72,10 +72,10 @@ class RememberableTest < ActiveSupport::TestCase
     swap Devise, :remember_for => 3.days do
       user = create_user
       user.remember_me!
-      assert_equal 3.days.from_now.to_date, user.remember_expires_at.to_date
+      assert_equal 3.days.from_now.utc.to_date, user.remember_expires_at.utc.to_date
 
       Devise.remember_for = 5.days
-      assert_equal 5.days.from_now.to_date, user.remember_expires_at.to_date
+      assert_equal 5.days.from_now.utc.to_date, user.remember_expires_at.utc.to_date
     end
   end
 
