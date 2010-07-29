@@ -7,13 +7,18 @@ class FailureTest < ActiveSupport::TestCase
   end
 
   def call_failure(env_params={})
+    if env_params.has_key?('formats')
+      formats = Array(env_params.delete('formats'))
+    else
+      formats = [:html]
+    end
     env = {
       'REQUEST_URI' => 'http://test.host/',
       'HTTP_HOST' => 'test.host',
       'REQUEST_METHOD' => 'GET',
       'warden.options' => { :scope => :user },
       'rack.session' => {},
-      'action_dispatch.request.formats' => Array(env_params.delete('formats') || :html),
+      'action_dispatch.request.formats' => formats,
       'rack.input' => "",
       'warden' => OpenStruct.new(:message => nil)
     }.merge!(env_params)
@@ -69,6 +74,11 @@ class FailureTest < ActiveSupport::TestCase
   context 'For HTTP request' do
     test 'return 401 status' do
       call_failure('formats' => :xml)
+      assert_equal 401, @response.first
+    end
+
+    test 'return 401 without format' do
+      call_failure('formats' => nil)
       assert_equal 401, @response.first
     end
 

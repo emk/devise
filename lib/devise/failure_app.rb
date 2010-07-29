@@ -34,7 +34,7 @@ module Devise
     def http_auth
       self.status = 401
       self.headers["WWW-Authenticate"] = %(Basic realm=#{Devise.http_authentication_realm.inspect})
-      self.content_type = request.format.to_s
+      self.content_type = (request.format || 'js').to_s
       self.response_body = http_auth_body
     end
 
@@ -68,11 +68,11 @@ module Devise
     end
 
     def http_auth?
-      !Devise.navigational_formats.include?(request.format.to_sym) || (request.xhr? && Devise.http_authenticatable_on_xhr)
+      !(request.format && Devise.navigational_formats.include?(request.format.to_sym)) || (request.xhr? && Devise.http_authenticatable_on_xhr)
     end
 
     def http_auth_body
-      method = :"to_#{request.format.to_sym}"
+      method = :"to_#{(request.format || 'js').to_sym}"
       {}.respond_to?(method) ? { :error => i18n_message }.send(method) : i18n_message
     end
 
